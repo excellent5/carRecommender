@@ -1,6 +1,6 @@
 __author__ = 'zhanyang'
 
-from metrics.calSimilarity import EuclideanSimilarity
+from metrics.calSimilarity import EuclideanDistance, distance2similarity
 
 class ItemSimilarity(object):
 
@@ -17,8 +17,8 @@ class ItemSimilarity(object):
                 if item == otheritem:
                     continue
                 else:
-                    similarity[item][otheritem] = EuclideanSimilarity(itemfeaturedict[item],
-                                                                      itemfeaturedict[otheritem])
+                    similarity[item][otheritem] = distance2similarity(EuclideanDistance(itemfeaturedict[item],
+                                                                                        itemfeaturedict[otheritem]))
         return similarity
 
 

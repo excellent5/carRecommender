@@ -2,7 +2,8 @@ __author__ = 'zhanyang'
 
 import csv
 import random
-from metrics.calSimilarity import EuclideanSimilarity
+from metrics.calSimilarity import EuclideanDistance, distance2similarity
+from dataprepocessor.normalizer import normalizeCarInfo
 
 # useritemdict is like {userID: {carID: times, ...}, ...}
 def getUserRentItem(filepath):
@@ -34,10 +35,22 @@ def getUserFeature(filepath):
                         float(row["year"]), float(row["rent_time"]), float(row["price"])]
             currentuser = int(row["reg_no"])
             for user in userfeature:
-                distances[user] = EuclideanSimilarity(features, userfeature[user])
+                distances[user] = distance2similarity(EuclideanDistance(features, userfeature[user]))
             userfeature[currentuser] = features
             userdistance[currentuser] = distances
     return userdistance
+
+
+def getItemFeature(filepath):
+    itemfeaturedict = {}
+    with open(filepath, "r") as infile:
+        csvreader = csv.DictReader(infile)
+        for row in csvreader:
+            car_no = int(row["car_no"])
+            features = normalizeCarInfo(row)
+            # features = [int(row["gearbox_type"]) - 1, int(row["is_local"]) - 1, float(row["day_price"])/2000]
+            itemfeaturedict[car_no] = features
+    return itemfeaturedict
 
 
 def prepareTrainingTestingData(dir, originalfilepath, shuffle=True):
